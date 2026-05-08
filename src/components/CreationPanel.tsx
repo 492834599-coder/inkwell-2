@@ -1,6 +1,6 @@
 import { ArrowRight, Feather, RefreshCw, Sparkles } from "lucide-react";
 import heroImage from "../assets/inkwell-workbench-hero.webp";
-import type { ProjectMode, ProviderTrace, StoryCandidate } from "../types/domain";
+import type { CandidateGenerationResult, ProjectMode, ProviderTrace, StoryCandidate } from "../types/domain";
 
 interface CreationPanelProps {
   mode: ProjectMode;
@@ -16,6 +16,8 @@ interface CreationPanelProps {
   candidates: StoryCandidate[];
   providerTrace?: ProviderTrace | null;
   providerFallback?: string[];
+  providerSource?: CandidateGenerationResult["providerSource"] | null;
+  providerMessage?: string;
 }
 
 const genres = ["都市悬疑", "科幻悬疑", "玄幻权谋", "仙侠群像"];
@@ -34,7 +36,10 @@ export function CreationPanel({
   candidates,
   providerTrace,
   providerFallback,
+  providerSource,
+  providerMessage,
 }: CreationPanelProps) {
+  const sourceLabel = formatSourceLabel(providerSource, providerTrace, providerFallback);
   return (
     <section className="creation-panel">
       <div className="creation-copy">
@@ -86,11 +91,11 @@ export function CreationPanel({
           <div>
             <span className="eyebrow">AI 企划候选</span>
             <h2>选一个方向开写</h2>
-            {(providerTrace || providerFallback?.length) && (
+            {(sourceLabel || providerMessage) && (
               <small className="provider-inline">
-                {providerTrace ? formatProvider(providerTrace) : "local fallback"}
+                {sourceLabel}
                 {providerTrace ? ` · ${formatLatency(providerTrace.latencyMs)}` : ""}
-                {providerTrace?.fallback || providerFallback?.length ? " · fallback" : ""}
+                {providerMessage ? ` · ${providerMessage}` : ""}
               </small>
             )}
           </div>
@@ -126,6 +131,20 @@ export function CreationPanel({
       </div>
     </section>
   );
+}
+
+function formatSourceLabel(
+  source: CandidateGenerationResult["providerSource"] | null | undefined,
+  trace?: ProviderTrace | null,
+  fallback?: string[]
+) {
+  if (source === "live-model" && trace) return `live model: ${formatProvider(trace)}`;
+  if (source === "backend-deterministic") return "local backend: deterministic";
+  if (source === "backend-deterministic-fallback") return "backend fallback: deterministic";
+  if (source === "frontend-fallback") return "frontend fallback: mock data";
+  if (trace) return trace.fallback ? `backend fallback: ${formatProvider(trace)}` : `live model: ${formatProvider(trace)}`;
+  if (fallback?.length) return "frontend fallback: mock data";
+  return "";
 }
 
 function formatProvider(trace: ProviderTrace) {

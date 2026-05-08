@@ -26,6 +26,8 @@ export function App() {
     candidates,
     candidateProviderTrace,
     candidateProviderFallback,
+    candidateProviderSource,
+    candidateProviderMessage,
     generateStoryCandidates,
     project,
     bible,
@@ -165,6 +167,8 @@ export function App() {
             candidates={candidates}
             providerTrace={candidateProviderTrace}
             providerFallback={candidateProviderFallback}
+            providerSource={candidateProviderSource}
+            providerMessage={candidateProviderMessage}
           />
         )}
         {view === "workspace" && project && (
@@ -196,6 +200,8 @@ export function App() {
             candidates={candidates}
             providerTrace={candidateProviderTrace}
             providerFallback={candidateProviderFallback}
+            providerSource={candidateProviderSource}
+            providerMessage={candidateProviderMessage}
           />
         )}
         {view === "workflow" && (

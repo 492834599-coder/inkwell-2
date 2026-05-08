@@ -39,6 +39,8 @@ export interface CandidateGenerationResult {
   candidates: StoryCandidate[];
   providerTrace?: ProviderTrace;
   providerFallback?: string[];
+  providerSource?: "live-model" | "backend-deterministic" | "backend-deterministic-fallback" | "frontend-fallback";
+  providerMessage?: string;
 }
 
 export interface ProviderHealth {
@@ -253,6 +255,8 @@ export interface ProjectSnapshot {
   candidates: StoryCandidate[];
   candidateProviderTrace: ProviderTrace | null;
   candidateProviderFallback: string[];
+  candidateProviderSource?: CandidateGenerationResult["providerSource"];
+  candidateProviderMessage?: string;
   project: NovelProject | null;
   bible: ProjectBible | null;
   chapterGoal: ChapterGoal | null;

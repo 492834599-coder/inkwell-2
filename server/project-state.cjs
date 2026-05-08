@@ -95,6 +95,15 @@ function validateSnapshot(snapshot) {
   requireArray(snapshot.candidates, 'snapshot.candidates');
   requireArray(snapshot.candidateProviderFallback, 'snapshot.candidateProviderFallback');
   requireNullableObject(snapshot.candidateProviderTrace, 'snapshot.candidateProviderTrace');
+  if (
+    snapshot.candidateProviderSource !== undefined &&
+    !['live-model', 'backend-deterministic', 'backend-deterministic-fallback', 'frontend-fallback'].includes(snapshot.candidateProviderSource)
+  ) {
+    throw httpError(400, 'snapshot.candidateProviderSource is invalid');
+  }
+  if (snapshot.candidateProviderMessage !== undefined) {
+    requireString(snapshot.candidateProviderMessage, 'snapshot.candidateProviderMessage', 1000, true);
+  }
   requireNullableObject(snapshot.project, 'snapshot.project');
   requireNullableObject(snapshot.bible, 'snapshot.bible');
   requireNullableObject(snapshot.chapterGoal, 'snapshot.chapterGoal');

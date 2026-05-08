@@ -53,6 +53,8 @@ interface ProjectState {
   candidates: StoryCandidate[];
   candidateProviderTrace: ProviderTrace | null;
   candidateProviderFallback: string[];
+  candidateProviderSource: ProjectSnapshot["candidateProviderSource"] | null;
+  candidateProviderMessage: string;
   project: NovelProject | null;
   bible: ProjectBible | null;
   chapterGoal: ChapterGoal | null;
@@ -120,6 +122,8 @@ export const useProjectStore = create<ProjectState>()(
       candidates,
       candidateProviderTrace: null,
       candidateProviderFallback: [],
+      candidateProviderSource: null,
+      candidateProviderMessage: "初始示例候选，尚未生成。",
       project: null,
       bible: null,
       chapterGoal: null,
@@ -155,16 +159,20 @@ export const useProjectStore = create<ProjectState>()(
           spark: state.spark,
         };
         set({ isGeneratingCandidates: true });
-        const result = await requestCandidates(input).catch(() => ({
+        const result = await requestCandidates(input).catch((error) => ({
           candidates: generateCandidates(input),
           providerTrace: undefined,
-          providerFallback: ["local deterministic candidate fallback"],
+          providerFallback: [error instanceof Error ? error.message : "candidate request failed"],
+          providerSource: "frontend-fallback" as const,
+          providerMessage: "本地后端请求失败，前端使用内置候选兜底。",
         }));
         const generated = result.candidates;
         set({
           candidates: generated,
           candidateProviderTrace: result.providerTrace || null,
           candidateProviderFallback: result.providerFallback || [],
+          candidateProviderSource: result.providerSource || (result.providerTrace ? "live-model" : "backend-deterministic"),
+          candidateProviderMessage: result.providerMessage || "",
           selectedCandidateId: generated[0]?.id || "",
           isGeneratingCandidates: false,
         });
@@ -210,6 +218,8 @@ export const useProjectStore = create<ProjectState>()(
           isCheckingZhuque: false,
           candidateProviderTrace: null,
           candidateProviderFallback: [],
+          candidateProviderSource: null,
+          candidateProviderMessage: "项目已重置，当前为初始示例候选。",
         });
         return project;
       },
@@ -665,6 +675,8 @@ export const useProjectStore = create<ProjectState>()(
           tutorialDismissed: state.tutorialDismissed ?? false,
           candidateProviderTrace: state.candidateProviderTrace || null,
           candidateProviderFallback: state.candidateProviderFallback || [],
+          candidateProviderSource: state.candidateProviderSource || null,
+          candidateProviderMessage: state.candidateProviderMessage || "",
         };
       },
     }
@@ -696,6 +708,8 @@ function createPersistedBrowserState(state: ProjectState): Partial<ProjectState>
     candidates: state.candidates,
     candidateProviderTrace: state.candidateProviderTrace,
     candidateProviderFallback: state.candidateProviderFallback,
+    candidateProviderSource: state.candidateProviderSource,
+    candidateProviderMessage: state.candidateProviderMessage,
     project: state.project,
     bible: state.bible,
     chapterGoal: state.chapterGoal,
@@ -724,6 +738,8 @@ function createProjectSnapshot(state: ProjectState): ProjectSnapshot {
     candidates: state.candidates,
     candidateProviderTrace: state.candidateProviderTrace,
     candidateProviderFallback: state.candidateProviderFallback,
+    candidateProviderSource: state.candidateProviderSource || undefined,
+    candidateProviderMessage: state.candidateProviderMessage,
     project: state.project,
     bible: state.bible,
     chapterGoal: state.chapterGoal,
@@ -757,6 +773,8 @@ function applyProjectSnapshot(snapshot: ProjectSnapshot, current: ProjectState):
     candidates: nextCandidates,
     candidateProviderTrace: snapshot.candidateProviderTrace || null,
     candidateProviderFallback: snapshot.candidateProviderFallback || [],
+    candidateProviderSource: snapshot.candidateProviderSource || null,
+    candidateProviderMessage: snapshot.candidateProviderMessage || "",
     project: snapshot.project || null,
     bible: snapshot.bible || null,
     chapterGoal: snapshot.chapterGoal || null,

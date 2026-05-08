@@ -64,6 +64,8 @@ async function verifyProjectStateContract({ candidates, bundle, draft, structure
     candidates: candidates.candidates,
     candidateProviderTrace: candidates.providerTrace || null,
     candidateProviderFallback: candidates.providerFallback || [],
+    candidateProviderSource: candidates.providerSource || 'backend-deterministic',
+    candidateProviderMessage: candidates.providerMessage || '',
     project: bundle.project,
     bible: bundle.bible,
     chapterGoal: bundle.chapterGoal,
