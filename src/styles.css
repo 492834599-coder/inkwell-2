@@ -378,6 +378,43 @@ p {
   margin-top: 16px;
 }
 
+.candidate-source-banner {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  border: 1px solid rgba(77, 58, 38, 0.14);
+  border-radius: var(--radius-control);
+  padding: 11px 12px;
+  background: rgba(255, 250, 240, 0.88);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.candidate-source-banner strong {
+  color: var(--ink);
+}
+
+.candidate-source-banner.live {
+  border-color: rgba(63, 107, 85, 0.35);
+  background: rgba(63, 107, 85, 0.1);
+}
+
+.candidate-source-banner.deterministic {
+  border-color: rgba(47, 95, 131, 0.25);
+  background: rgba(47, 95, 131, 0.09);
+}
+
+.candidate-source-banner.warning {
+  border-color: rgba(165, 111, 49, 0.42);
+  background: rgba(165, 111, 49, 0.13);
+}
+
+.candidate-source-banner.error {
+  border-color: rgba(159, 68, 42, 0.5);
+  background: rgba(159, 68, 42, 0.12);
+}
+
 textarea {
   width: 100%;
   min-height: 126px;

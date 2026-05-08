@@ -28,6 +28,7 @@ export function App() {
     candidateProviderFallback,
     candidateProviderSource,
     candidateProviderMessage,
+    isGeneratingCandidates,
     generateStoryCandidates,
     project,
     bible,
@@ -158,6 +159,7 @@ export function App() {
             onGenreChange={setGenre}
             onSparkChange={setSpark}
             onGenerate={generateStoryCandidates}
+            isGenerating={isGeneratingCandidates}
             selectedId={selectedCandidateId}
             onSelect={selectCandidate}
             onStart={async () => {
@@ -191,6 +193,7 @@ export function App() {
             onGenreChange={setGenre}
             onSparkChange={setSpark}
             onGenerate={generateStoryCandidates}
+            isGenerating={isGeneratingCandidates}
             selectedId={selectedCandidateId}
             onSelect={selectCandidate}
             onStart={async () => {

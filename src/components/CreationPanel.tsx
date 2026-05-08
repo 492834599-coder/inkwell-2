@@ -10,6 +10,7 @@ interface CreationPanelProps {
   onGenreChange: (genre: string) => void;
   onSparkChange: (spark: string) => void;
   onGenerate: () => void;
+  isGenerating?: boolean;
   selectedId: string;
   onSelect: (id: string) => void;
   onStart: () => void | Promise<void>;
@@ -30,6 +31,7 @@ export function CreationPanel({
   onGenreChange,
   onSparkChange,
   onGenerate,
+  isGenerating = false,
   selectedId,
   onSelect,
   onStart,
@@ -40,6 +42,8 @@ export function CreationPanel({
   providerMessage,
 }: CreationPanelProps) {
   const sourceLabel = formatSourceLabel(providerSource, providerTrace, providerFallback);
+  const sourceTone = formatSourceTone(providerSource, providerTrace, providerFallback);
+  const sourceDetail = providerMessage || providerFallback?.[0] || "";
   return (
     <section className="creation-panel">
       <div className="creation-copy">
@@ -79,10 +83,17 @@ export function CreationPanel({
               <textarea value={spark} onChange={(event) => onSparkChange(event.target.value)} />
             </>
           )}
-          <button className="secondary-action generate-action" onClick={onGenerate}>
+          <button className="secondary-action generate-action" onClick={onGenerate} disabled={isGenerating}>
             <RefreshCw size={17} />
-            生成 3 个方向
+            {isGenerating ? "生成中..." : "生成 3 个方向"}
           </button>
+          {(sourceLabel || sourceDetail) && (
+            <div className={`candidate-source-banner ${sourceTone}`}>
+              <strong>{sourceLabel || "候选生成状态"}</strong>
+              {sourceDetail && <span>{sourceDetail}</span>}
+              {providerFallback?.length ? <span>{providerFallback.slice(0, 2).join(" · ")}</span> : null}
+            </div>
+          )}
         </div>
       </div>
 
@@ -91,11 +102,11 @@ export function CreationPanel({
           <div>
             <span className="eyebrow">AI 企划候选</span>
             <h2>选一个方向开写</h2>
-            {(sourceLabel || providerMessage) && (
+            {(sourceLabel || sourceDetail) && (
               <small className="provider-inline">
                 {sourceLabel}
                 {providerTrace ? ` · ${formatLatency(providerTrace.latencyMs)}` : ""}
-                {providerMessage ? ` · ${providerMessage}` : ""}
+                {sourceDetail ? ` · ${sourceDetail}` : ""}
               </small>
             )}
           </div>
@@ -145,6 +156,19 @@ function formatSourceLabel(
   if (trace) return trace.fallback ? `backend fallback: ${formatProvider(trace)}` : `live model: ${formatProvider(trace)}`;
   if (fallback?.length) return "frontend fallback: mock data";
   return "";
+}
+
+function formatSourceTone(
+  source: CandidateGenerationResult["providerSource"] | null | undefined,
+  trace?: ProviderTrace | null,
+  fallback?: string[]
+) {
+  if (source === "live-model" && !trace?.fallback) return "live";
+  if (source === "backend-deterministic") return "deterministic";
+  if (source === "backend-deterministic-fallback") return "warning";
+  if (source === "frontend-fallback") return "error";
+  if (trace?.fallback || fallback?.length) return "warning";
+  return "neutral";
 }
 
 function formatProvider(trace: ProviderTrace) {
