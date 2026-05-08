@@ -1,0 +1,8 @@
+.local/
+.cargo/
+.learnings/
+artifacts/
+dist/
+node_modules/
+*.log
+*.tsbuildinfo

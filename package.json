@@ -1,0 +1,39 @@
+{
+  "name": "inkwell-2",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "backend:server": "node server/zhuque-server.cjs",
+    "backend:server:mock": "set ZHUQUE_MOCK=true&& node server/zhuque-server.cjs",
+    "backend:server:live": "set INKWELL_PROVIDER_MODE=live&& node server/zhuque-server.cjs",
+    "backend:contract": "node tools/backend-contract.cjs",
+    "backend:e2e:live": "node tools/live-e2e.cjs",
+    "zhuque:server": "node server/zhuque-server.cjs",
+    "zhuque:server:mock": "set ZHUQUE_MOCK=true&& node server/zhuque-server.cjs",
+    "zhuque:server:visible": "set ZHUQUE_HEADLESS=false&& node server/zhuque-server.cjs",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "tauri build"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@xyflow/react": "^12.10.2",
+    "lucide-react": "^0.468.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "vite": "^8.0.11",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.1",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3"
+  }
+}
